@@ -21,7 +21,8 @@
 
 ## 🚀 프로젝트 (2025)
 
-### QuantrumAI - 주식 초보자를 위한 정보 플랫폼
+### Dipping (QuantrumAI)
+주식 초보자를 위한 정보 플랫폼
 
 **Pin 챗봇**
 - LangChain + Gemini를 활용한 주린이 AI 챗봇

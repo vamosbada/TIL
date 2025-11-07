@@ -21,7 +21,8 @@ Real-world implementations
 
 ## 🚀 Projects (2025)
 
-### QuantrumAI - Stock Information Platform for Beginners
+### Dipping (QuantrumAI)
+Stock information platform for beginners
 
 **Pin Chatbot**
 - AI chatbot for stock beginners using LangChain + Gemini
