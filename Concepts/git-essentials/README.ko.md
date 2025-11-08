@@ -149,7 +149,121 @@ git checkout -- file.py
 
 ---
 
-### 6. 커밋 메시지 컨벤션
+### 6. Atomic Commit (작은 단위 커밋)
+
+**핵심 원칙**: 하나의 커밋 = 하나의 논리적 변경
+
+#### 왜 작게 커밋해야 하나?
+
+**문제 상황**:
+```bash
+# ❌ 3일치 작업을 한 번에
+git add .
+git commit -m "3일치 작업 완료"
+
+→ 버그 발견 시 3일치 전부 롤백
+→ 코드 리뷰 불가능 (+500 lines)
+→ 협업 시 충돌 대참사
+→ 기여 내역 불명확
+```
+
+**해결책**:
+```bash
+# ✅ 작은 단위로 자주 커밋
+git add src/components/LoginButton.tsx
+git commit -m "feat: 로그인 버튼 컴포넌트 추가"
+
+# 30분~1시간 후
+git add src/api/auth.ts
+git commit -m "feat: 로그인 API 함수 구현"
+
+# 버그 발견 → 즉시 수정
+git add src/components/LoginButton.tsx
+git commit -m "fix: 로그인 버튼 로딩 상태 표시 추가"
+```
+
+#### 커밋 주기
+
+**일반적인 개발자**: 하루 5~10개 커밋
+- 기능 하나 완성할 때마다
+- 버그 하나 고칠 때마다
+- 파일 하나 추가할 때마다
+
+**실전 예시**:
+```bash
+09:00 - 로그인 폼 UI 구현
+09:30 - git commit "feat: 로그인 폼 컴포넌트 구현"
+
+10:30 - API 연결
+11:00 - git commit "feat: 로그인 API 연동"
+
+11:30 - 버그 수정
+11:45 - git commit "fix: 빈 이메일 입력 시 검증 추가"
+
+14:00 - 테스트 코드
+15:00 - git commit "test: 로그인 폼 단위 테스트 추가"
+```
+
+---
+
+### 7. 파일 지정 및 Push 전략
+
+#### A. git add . 지양하기
+
+**문제**:
+```bash
+# ❌ 모든 파일 무분별하게 추가
+git add .
+git commit -m "작업함"
+
+→ 불필요한 파일 커밋 (.env, node_modules 등)
+→ 관련 없는 변경사항이 한 커밋에
+```
+
+**해결**:
+```bash
+# ✅ 파일 지정해서 추가
+git add src/components/Dashboard.tsx
+git commit -m "feat: 대시보드 레이아웃 추가"
+
+git add src/api/stock.ts
+git commit -m "feat: 주식 데이터 조회 API 추가"
+
+# 또는 대화형 선택
+git add -p  # 변경사항을 하나씩 확인하며 추가
+```
+
+#### B. Push 타이밍
+
+**Option 1: 기능 단위로 push (추천)**
+```bash
+# 관련된 커밋 2-3개 쌓인 후
+git commit -m "feat: 로그인 폼 구현"
+git commit -m "feat: 로그인 API 연동"
+git commit -m "test: 로그인 테스트 추가"
+git push origin main
+```
+
+**Option 2: 하루 1-2번**
+```bash
+# 점심 전
+git push origin main
+
+# 퇴근 전 (필수)
+git push origin main
+```
+
+**Option 3: 커밋마다 (팀 협업 시)**
+```bash
+git commit -m "feat: 새 기능"
+git push origin main  # 바로 push
+```
+
+**핵심**: 최소 하루 1번은 무조건 push
+
+---
+
+### 8. 커밋 메시지 컨벤션
 
 **형식**: `<타입>: <설명>`
 
@@ -166,7 +280,8 @@ git checkout -- file.py
 ```bash
 git commit -m "수정"
 git commit -m "ㅁㄴㅇㄹ"
-git commit -m "asdf"
+git commit -m "git add ."
+git commit -m "3일치 작업"
 ```
 
 **좋은 예시**:
@@ -174,16 +289,27 @@ git commit -m "asdf"
 git commit -m "feat: Selenium 크롤러 구현"
 git commit -m "fix: jQuery Datepicker 조작 로직 수정"
 git commit -m "refactor: 모델 설계 개선 (DateField 분리)"
+git commit -m "test: 크롤러 API 단위 테스트 추가"
 ```
 
 ---
 
 ## 💡 왜 배웠나?
 
-**Dipping 프로젝트**에서:
-- 팀원들과 코드 공유 (push/pull)
-- 기능별 브랜치 작업
-- 충돌 해결
+**Zerothon 2025 해커톤**에서:
+- Git 브랜치 전략 미숙으로 커밋 히스토리 문제 발생
+- 한 팀원이 `final commit`으로 모든 코드 일괄 업로드
+- 개별 기여 내역 불명확
+
+**교훈**:
+- Atomic Commit의 중요성 깨달음
+- 작은 단위로 자주 커밋해야 기여 내역 명확
+- 파일 지정해서 add, 의미 있는 커밋 메시지 필수
+
+**이후 개선**:
+- QuantrumAI 프로젝트부터 작은 단위 커밋 적용
+- 하루 5~10개 커밋, 매일 push
+- PR 기반 협업으로 전환
 
 ---
 
@@ -208,16 +334,19 @@ git commit -m "refactor: 모델 설계 개선 (DateField 분리)"
 **Q1: fetch와 pull의 차이는?**
 > A: fetch는 원격 변경사항만 가져오고 내 코드는 건드리지 않습니다. pull은 fetch + merge를 한 번에 수행하여 원격 변경사항을 내 코드와 합칩니다. 안전하게 확인하고 싶으면 fetch, 빠르게 작업하고 싶으면 pull을 사용합니다.
 
-**Q2: pull을 하면 내 코드가 사라지나요?**
-> A: 아닙니다. pull은 원격 변경사항과 내 코드를 합치는(merge) 작업입니다. 충돌이 발생하면 Git이 알려주고, 직접 해결할 수 있습니다.
+**Q2: 커밋은 얼마나 자주 해야 하나요?**
+> A: 하나의 논리적 변경이 완료될 때마다 커밋해야 합니다. 일반적으로 하루 5~10개 정도가 적절하며, 3일치 작업을 한 번에 커밋하면 롤백이 어렵고 기여 내역이 불명확해집니다. Zerothon 프로젝트에서 이 문제를 겪은 후 작은 단위로 자주 커밋하는 습관을 들였습니다.
 
-**Q3: 충돌은 언제 발생하나요?**
-> A: 같은 파일의 같은 부분을 원격과 내가 다르게 수정했을 때 발생합니다. Git이 자동으로 합칠 수 없어 수동으로 해결해야 합니다.
+**Q3: git add . 을 사용해도 되나요?**
+> A: 지양해야 합니다. 불필요한 파일(.env, node_modules 등)이나 관련 없는 변경사항이 함께 커밋될 수 있습니다. 파일을 지정해서 add하거나 git add -p로 대화형으로 선택하는 것이 안전합니다.
 
 **Q4: 좋은 커밋 메시지란?**
 > A: "무엇을 왜 했는지" 명확히 알 수 있어야 합니다. `feat:`, `fix:` 같은 타입을 붙이고, 간결하게 작성합니다. "수정" 같은 모호한 메시지는 피해야 합니다.
 
-**Q5: reset --soft와 --hard의 차이는?**
+**Q5: push는 언제 해야 하나요?**
+> A: 최소 하루 1번은 push해야 합니다. 기능 단위로 커밋 2-3개 쌓인 후 push하거나, 팀 협업 시에는 커밋마다 바로 push하기도 합니다. 퇴근 전 push는 필수입니다.
+
+**Q6: reset --soft와 --hard의 차이는?**
 > A: `--soft`는 커밋만 취소하고 변경사항은 유지합니다. `--hard`는 커밋과 변경사항을 모두 취소하여 복구가 불가능합니다. 일반적으로 `--soft`가 안전합니다.
 
 ---
@@ -254,7 +383,9 @@ git checkout -- file.py    # 파일 변경사항 취소
 
 **핵심 원칙**:
 1. `pull`은 합치기, 덮어쓰기 아님
-2. 커밋은 작고 자주
-3. 커밋 메시지는 명확하게
-4. 브랜치로 기능 분리
-5. push 전에 항상 pull
+2. **커밋은 작고 자주** (하루 5~10개)
+3. **git add .** 지양, 파일 지정해서 add
+4. **커밋 메시지는 명확하게** (feat, fix, docs 등)
+5. **하루 1번은 무조건 push** (퇴근 전 필수)
+6. 브랜치로 기능 분리
+7. push 전에 항상 pull
