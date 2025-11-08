@@ -35,9 +35,9 @@
 - Django REST API + APScheduler 자동 스케줄링
 
 **Patron**
-- 주식 차트 패턴 유사도 검색 (진행 중)
-- 슬라이딩 윈도우 방식 데이터 전처리
-- 향후: ResNet18 + Triplet Loss 기반 유사도 검색
+- 주식 차트 패턴 유사도 검색 시스템
+- Phase 1 완료: 49,815개 패턴 데이터 전처리 (OHLC, 2020-2025)
+- Phase 2 진행 중: ResNet18 + Triplet Loss 모델 학습
 
 ---
 

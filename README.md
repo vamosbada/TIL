@@ -35,9 +35,9 @@ Stock information platform for beginners
 - Django REST API + APScheduler automation
 
 **Patron**
-- Stock chart pattern recognition (in progress)
-- Data preprocessing with sliding window approach
-- Future: ResNet18 + Triplet Loss for similarity search
+- Stock chart pattern similarity search system
+- Phase 1 Complete: 49,815 patterns preprocessed (OHLC, 2020-2025)
+- Phase 2 In Progress: ResNet18 + Triplet Loss model training
 
 ---
 
