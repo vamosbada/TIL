@@ -149,7 +149,121 @@ git checkout -- file.py
 
 ---
 
-### 6. Commit Message Convention
+### 6. Atomic Commit (Small Unit Commits)
+
+**Core Principle**: One commit = One logical change
+
+#### Why Commit Small?
+
+**Problem**:
+```bash
+# ❌ 3 days of work in one commit
+git add .
+git commit -m "3 days work done"
+
+→ Rollback loses 3 days of work
+→ Code review impossible (+500 lines)
+→ Merge conflicts nightmare
+→ Contribution unclear
+```
+
+**Solution**:
+```bash
+# ✅ Commit in small units frequently
+git add src/components/LoginButton.tsx
+git commit -m "feat: add login button component"
+
+# 30min~1hr later
+git add src/api/auth.ts
+git commit -m "feat: implement login API function"
+
+# Bug found → Fix immediately
+git add src/components/LoginButton.tsx
+git commit -m "fix: add loading state to login button"
+```
+
+#### Commit Frequency
+
+**Typical developer**: 5-10 commits per day
+- Each feature completion
+- Each bug fix
+- Each file addition
+
+**Real Example**:
+```bash
+09:00 - Build login form UI
+09:30 - git commit "feat: implement login form component"
+
+10:30 - Connect API
+11:00 - git commit "feat: integrate login API"
+
+11:30 - Fix bug
+11:45 - git commit "fix: add validation for empty email"
+
+14:00 - Write tests
+15:00 - git commit "test: add login form unit tests"
+```
+
+---
+
+### 7. File Specification and Push Strategy
+
+#### A. Avoid git add .
+
+**Problem**:
+```bash
+# ❌ Add all files indiscriminately
+git add .
+git commit -m "work done"
+
+→ Commits unnecessary files (.env, node_modules, etc.)
+→ Unrelated changes in one commit
+```
+
+**Solution**:
+```bash
+# ✅ Specify files
+git add src/components/Dashboard.tsx
+git commit -m "feat: add dashboard layout"
+
+git add src/api/stock.ts
+git commit -m "feat: add stock data API"
+
+# Or interactive selection
+git add -p  # Select changes interactively
+```
+
+#### B. Push Timing
+
+**Option 1: Push by feature (Recommended)**
+```bash
+# After 2-3 related commits
+git commit -m "feat: implement login form"
+git commit -m "feat: integrate login API"
+git commit -m "test: add login tests"
+git push origin main
+```
+
+**Option 2: 1-2 times per day**
+```bash
+# Before lunch
+git push origin main
+
+# Before leaving (Required)
+git push origin main
+```
+
+**Option 3: After each commit (Team collaboration)**
+```bash
+git commit -m "feat: new feature"
+git push origin main  # Push immediately
+```
+
+**Key**: Push at least once per day
+
+---
+
+### 8. Commit Message Convention
 
 **Format**: `<type>: <description>`
 
@@ -166,7 +280,8 @@ git checkout -- file.py
 ```bash
 git commit -m "update"
 git commit -m "fix bug"
-git commit -m "asdf"
+git commit -m "git add ."
+git commit -m "3 days work"
 ```
 
 **Good examples**:
@@ -174,16 +289,27 @@ git commit -m "asdf"
 git commit -m "feat: implement Selenium crawler"
 git commit -m "fix: update jQuery Datepicker manipulation logic"
 git commit -m "refactor: improve model design (separate DateField)"
+git commit -m "test: add crawler API unit tests"
 ```
 
 ---
 
 ## 💡 Why I Learned This
 
-**Dipping project** needed:
-- Share code with team (push/pull)
-- Feature branch workflow
-- Conflict resolution
+**Zerothon 2025 Hackathon**:
+- Immature Git branching strategy caused commit history issues
+- One team member batch-uploaded all code with `final commit`
+- Individual contributions unclear
+
+**Lessons**:
+- Realized importance of Atomic Commits
+- Small frequent commits make contributions clear
+- File specification for add, meaningful commit messages essential
+
+**Improvements**:
+- Applied small unit commits starting from QuantrumAI project
+- 5-10 commits per day, daily push
+- Switched to PR-based collaboration
 
 ---
 
@@ -208,16 +334,19 @@ git commit -m "refactor: improve model design (separate DateField)"
 **Q1: What's the difference between fetch and pull?**
 > A: fetch only retrieves remote changes without touching local code. pull performs fetch + merge in one command, combining remote changes with local code. Use fetch for safe checking, pull for quick updates.
 
-**Q2: Does pull delete my code?**
-> A: No. Pull merges remote changes with local code. If conflicts occur, Git notifies you and you can resolve them manually.
+**Q2: How often should you commit?**
+> A: Each time a logical change is complete. Typically 5-10 commits per day is appropriate. Committing 3 days of work at once makes rollback difficult and contributions unclear. After experiencing this issue in the Zerothon project, I developed the habit of committing frequently in small units.
 
-**Q3: When do conflicts occur?**
-> A: When the same part of the same file is modified differently by remote and local. Git cannot automatically merge and requires manual resolution.
+**Q3: Is it okay to use git add .?**
+> A: Should be avoided. It can commit unnecessary files (.env, node_modules, etc.) or unrelated changes together. Safer to specify files or use git add -p for interactive selection.
 
 **Q4: What makes a good commit message?**
 > A: It should clearly state "what and why." Add types like `feat:`, `fix:` and write concisely. Avoid vague messages like "update" or "fix."
 
-**Q5: What's the difference between reset --soft and --hard?**
+**Q5: When should you push?**
+> A: At least once per day. Push after 2-3 related commits accumulate, or for team collaboration, push immediately after each commit. Pushing before leaving is mandatory.
+
+**Q6: What's the difference between reset --soft and --hard?**
 > A: `--soft` only undoes the commit while keeping changes. `--hard` undoes both commit and changes irreversibly. Generally `--soft` is safer.
 
 ---
@@ -254,7 +383,9 @@ git checkout -- file.py    # Undo file changes
 
 **Core Principles**:
 1. `pull` is merging, not overwriting
-2. Commit small and often
-3. Write clear commit messages
-4. Separate features with branches
-5. Always pull before push
+2. **Commit small and often** (5-10 per day)
+3. **Avoid git add .**, specify files
+4. **Write clear commit messages** (feat, fix, docs, etc.)
+5. **Push at least once per day** (before leaving mandatory)
+6. Separate features with branches
+7. Always pull before push
