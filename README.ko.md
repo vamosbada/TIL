@@ -21,6 +21,31 @@
 
 ## 🚀 프로젝트 (2025)
 
+### Zerothon 2025 - Blitz-Q 🏆
+첫 해커톤에서 최우수상 수상
+
+**프로젝트 개요**
+- 팀 협업 자동화 플랫폼 (일일 보고서 AI 분석)
+- 전국 단위 해커톤 (단국대학교 제로톤 2025)
+- 80명 19개 팀 중 최우수상 (2등) 수상
+
+**내 역할**
+- 팀장: 5인 팀 리더십, 역할 분배, 갈등 조율
+- 프론트엔드 개발: Vanilla JavaScript로 메인 대시보드 및 보고서 작성 폼 구현
+- 발표자: 발표 점수 1등 획득
+
+**기술 스택**
+- Frontend: Vanilla JavaScript, HTML5, CSS3
+- Backend: Node.js + Express.js + SQLite3
+- AI: Google Gemini API
+
+**핵심 학습**
+- 프레임워크 없이 순수 JS로 동적 UI 구현 → React 학습 시작
+- Git 협업 전략의 중요성 체감 → PR 기반 협업 적용
+- Top-down 학습법 전환 (프로젝트 중심 학습)
+
+---
+
 ### Dipping (QuantrumAI)
 주식 초보자를 위한 정보 플랫폼
 
