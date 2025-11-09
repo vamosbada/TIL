@@ -1,30 +1,30 @@
-# <∆ Zerothon 2025 Excellence Award - Blitz-Q
+# üèÜ Zerothon 2025 Excellence Award - Blitz-Q
 
 > **First Hackathon, First Real Project - Excellence Award Winner**
 > Team Collaboration Automation Platform | Frontend Developer + Team Leader + Presenter
 
 ---
 
-## <Ø Project Overview
+## üéØ Project Overview
 
-**"What's our team doing?"** - This project started from this question.
+**"What is our team doing?"** - This project started from this simple question.
 
-Blitz-Q is a collaboration tool that automatically analyzes team members' daily reports using AI to understand team status at a glance. Like Blitzcrank's Q skill in League of Legends, it grabs all team members' progress at once.
+Blitz-Q is a collaboration tool that automatically analyzes team members' daily reports using AI, allowing you to grasp the team status at a glance. Like Blitzcrank's Q skill in League of Legends, it captures all team members' progress at once.
 
 **Competition Information**:
-- **Scale**: Zerothon 2025 (Dankook University Nationwide Hackathon)
-- **Participants**: 80 people, 19 teams total
-- **Award**: Excellence Award (2nd place)
+- **Scale**: National-level Hackathon (Dankook University Zerothon 2025)
+- **Participants**: 80 people total, 19 teams
+- **Award**: Excellence Award (2nd Place)
 - **Development Period**: 2025.03.26 ~ 2025.03.29 (100 hours)
-- **Judges**: Industry professionals from Toss, Naver, financial institutions
+- **Judges**: Professionals from Toss, Naver, and financial public corporations
 
-= **Official Links**:
+üîó **Official Links**:
 - [Zerothon 2025 Official Website](https://zerothon-2025.github.io/)
-- [Dankook University Official Notice](https://swcu.dankook.ac.kr/en/-5?p_p_id=dku_bbs_web_BbsPortlet&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&_dku_bbs_web_BbsPortlet_cur=2&_dku_bbs_web_BbsPortlet_action=view_message&_dku_bbs_web_BbsPortlet_orderBy=createDate&_dku_bbs_web_BbsPortlet_bbsMessageId=25260)
+- [Dankook University Official Announcement](https://swcu.dankook.ac.kr/en/-5?p_p_id=dku_bbs_web_BbsPortlet&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&_dku_bbs_web_BbsPortlet_cur=2&_dku_bbs_web_BbsPortlet_action=view_message&_dku_bbs_web_BbsPortlet_orderBy=createDate&_dku_bbs_web_BbsPortlet_bbsMessageId=25260)
 
 ---
 
-## =‡ Tech Stack
+## üõ† Tech Stack
 
 ### Frontend (My Responsibility)
 - **Vanilla JavaScript** - Pure JS implementation without frameworks
@@ -41,94 +41,94 @@ Blitz-Q is a collaboration tool that automatically analyzes team members' daily 
 
 ---
 
-## =ª My Role
+## üíª My Role
 
-### 1„ Frontend Development
+### 1Ô∏è‚É£ Frontend Development
 
 **Main Dashboard (`index.html`)**:
-- Displayed team member progress, To-Do lists, and AI analysis results on one screen
-- Intuitive UI/UX design (progress bars, color-coded status indicators)
+- Arranged team members' progress, To-Do lists, and AI analysis results on one screen
+- Intuitive UI/UX design (progress bars, color-based status differentiation)
 
 **Report Writing Page (`report.html`)**:
-- Structured input forms for "What I did yesterday", "What I'll do today", "Issues"
-- Dynamic task checklist (add/delete functionality)
+- Structured input form for "What I did yesterday", "What I'll do today", "Issues"
+- Dynamic to-do checklist (add/delete functionality)
 
 **Overall Frontend Design**:
-- Collaborated with team members on entire UI/UX
-- Core philosophy: "User-friendly UI/UX" (not showing off skills)
+- Collaborated with another team member to handle overall UI/UX
+- Core philosophy: "User-friendly UI/UX" (not showing off capabilities)
 - Actively utilized familiar patterns like Google login button
 
 **Technical Constraints and Learning**:
-- First real project - no experience with React, Vue, or other frameworks
-- Implemented dynamic UI with pure JS/HTML/CSS only
-- Realized frameworks are possible without but felt the efficiency difference í Started learning React afterward
+- First real project - no experience with frameworks like React, Vue
+- Implemented dynamic UI using only pure JS/HTML/CSS
+- Realized efficiency differences without frameworks ‚Üí Started learning React afterward
 
 ---
 
-### 2„ Team Leader Role
+### 2Ô∏è‚É£ Team Leader Role
 
-**Team Composition**: 3 Frontend + 2 Backend (large skill gap)
+**Team Composition**: 3 Frontend + 2 Backend developers (large skill gap)
 
-**Role-based Distribution**:
-- Skilled members: Focus on core feature development
-- Beginner members: Research, design drafts, and growth-oriented roles
-- Coordinated so everyone could contribute while utilizing their strengths
+**Role-Customized Distribution**:
+- Skilled members: Focused on core feature development
+- Beginner members: Research, design drafts - roles that enable growth
+- Coordinated so everyone could contribute while leveraging their strengths
 
 **Conflict Resolution**:
-- Situation: Emotional friction during meeting time coordination the day before Zerothon
-- Solution: Individual opinion gathering í Objective criteria readjustment í Team goal reminder
+- Situation: Emotional friction during meeting time coordination before Zerothon
+- Solution: Individual opinion listening ‚Üí Objective criteria readjustment ‚Üí Team goal reminder
 
 **Leadership Philosophy**: "Not pulling from the front, but pushing from behind"
 
 ---
 
-### 3„ Presenter Role
+### 3Ô∏è‚É£ Presenter Role
 
 **Presentation Order**: 18th out of 19 teams (very disadvantageous position)
 
 **Presentation Strategy**:
-1. Opening: "What's our team doing?" - Three words creating empathy
-2. Core message: Problem empathy í Solution presentation í Live demo
-3. Presentation philosophy: "Make as many audience members listen for as long as possible"
+1. Opening: "What is our team doing?" - Built empathy with three words
+2. Core Message: Problem empathy ‚Üí Solution presentation ‚Üí Actual demonstration
+3. Presentation Philosophy: "Make as many audience members listen to my story for as long as possible"
 
 **Result**: Achieved 1st place in presentation score
 
 ---
 
-## > Team Collaboration and Git
+## ü§ù Team Collaboration and Git
 
 **Current Commit History Situation**:
-- One team member uploaded all code with `final commit`
-- Almost no individual commit records (mine shows only README edits)
+- One team member uploaded all code in a `final commit`
+- Almost no individual commit records (I only recorded README writing)
 
 **Actual Development Process**:
-- Local development í Offline integration í Final batch commit
-- Immature Git branching strategy at the time
+- Local development ‚Üí Offline integration ‚Üí Final batch commit
+- Insufficient Git branching strategy knowledge at the time
 
 **Actual Contributions**:
-- Main dashboard and report form UI/UX design/implementation
-- Overall frontend design direction
-- Team schedule coordination and role distribution
+- Main dashboard and report writing form UI/UX design/implementation
+- Set overall frontend design direction
+- Team scheduling coordination and role distribution
 - Final presentation and PPT creation
 
-**Learning Point**: Git branching strategy essential for team collaboration í Applied PR-based collaboration in later projects
+**Learning Point**: Git branching strategy essential for team collaboration ‚Üí Applied PR-based collaboration in subsequent projects
 
 ---
 
-## =° Lessons Learned
+## üí° Lessons Learned
 
 ### Technical Learning
 
-**Need for Frameworks**:
-- Experience implementing dynamic UI with pure JS
-- Felt inefficiency while manually writing DOM manipulation/event handling
+**Necessity of Frameworks**:
+- Experienced implementing dynamic UI with pure JS
+- Felt inefficiency through manually writing DOM manipulation/event handling
 - Started learning React afterward
 
 **Importance of Git Collaboration**:
 - Learned branching strategy, Pull Requests, commit message conventions
 
 **Importance of Design**:
-- Even great features get ignored if UI/UX is complex
+- No matter how good the features, complex UI/UX gets ignored
 - Importance of utilizing familiar patterns
 
 ---
@@ -136,108 +136,108 @@ Blitz-Q is a collaboration tool that automatically analyzes team members' daily 
 ### Leadership and Collaboration
 
 **Leader Who Pushes from Behind**:
-- Pulling from front makes team passive, pushing from behind makes them proactive
-- Give meaningful roles even to less capable members
+- Pulling from front makes team members passive, pushing from behind makes them proactive
+- Give meaningful roles even to less capable team members
 
 **Courage to Be Disliked**:
-- Leader must step up when team direction goes wrong
-- Can't satisfy everyone but must protect team goals
+- Leader must step up when team direction is wrong
+- Can't satisfy everyone, but must protect team goals
 
 ---
 
 ### Presentation Skills
 
 **Maintaining Audience Focus**:
-- Opening impact: 3-word empathy creation
-- Storytelling: Problem í Solution í Demo
-- Direct demonstration of finished product
+- Opening impact: 3-word empathy building
+- Storytelling: Problem ‚Üí Solution ‚Üí Demonstration
+- Direct demonstration of completed product
 
 ---
 
-### Shift in Learning Approach
+### Learning Approach Shift
 
-**Bottom-up í Top-down**:
-- Before: Theory first, step by step (slow and boring)
-- After: Build actual product while finding gaps (fast and enjoyable)
+**Bottom-up ‚Üí Top-down**:
+- Before: Starting from theory step by step (slow and boring)
+- After: Making actual products and finding gaps (fast and enjoyable)
 
 **Importance of Completion**:
-- 100% finished product beats 80% ideas
+- 100% completed product beats 80% idea
 - Must implement to actually usable level to gain recognition
 
-**Why Our Team Won**:
+**Why Our Team Won the Award**:
 1. Completion: Full frontend-backend integration
-2. Presentation: Storytelling that captivated audience
+2. Presentation: Storytelling that captivated the audience
 3. Practicality: Actually usable service
 
 ---
 
-## =Ä Impact Afterward
+## üöÄ Subsequent Impact
 
 After this project:
-- Started learning React (felt framework necessity)
-- Improved Git collaboration (branching strategy, PR)
-- Established Top-down learning (project-centered)
-- Gained team project confidence
+- Started learning React (realized need for frameworks)
+- Improved Git collaboration methods (branching strategy, PR)
+- Established Top-down learning approach (project-centered)
+- Gained confidence in team projects
 
-**Current**:
-- Backend + AI role in QuantrumAI project
-- Full-stack development with Django + React
-- Project leadership utilizing team leader experience
+**Currently**:
+- Backend + AI developer in QuantrumAI project
+- Full-stack development with Django + React combination
+- Leading project leveraging team leader experience
 
 ---
 
-## = Project Links
+## üîó Project Links
 
 - **GitHub**: [Blitz-Q Repository](https://github.com/Godwind5/Blitz-Q)
 - **Zerothon Official**: [https://zerothon-2025.github.io/](https://zerothon-2025.github.io/)
 
 ---
 
-## S Interview Prep Questions
+## ‚ùì Expected Interview Questions
 
-### Q1: Your Git commit history shows almost no contributions. Did you actually develop?
+### Q1: There are almost no contribution records in the Git commit history. Did you actually develop it?
 
-**A**: Yes, I did. We developed with offline collaboration focus and didn't know Git branching strategy, so one team member batch-committed the final code. Actually, I designed/implemented the main dashboard and report form UI/UX, coordinated schedules as team leader, and handled the final presentation. This experience taught me the importance of Git collaboration, and I've applied branching strategy and PR-based collaboration in subsequent projects.
-
----
-
-### Q2: Why did you develop with pure JS without frameworks?
-
-**A**: It was my first real project and I didn't know frameworks. Implementing DOM manipulation and event handling directly helped me deeply understand JavaScript internals, but I felt limitations in code reusability and maintainability. After experiencing why frameworks are needed, I immediately started learning React, and now I develop efficiently while understanding internal principles thanks to pure JS experience.
+**A**: Yes, absolutely. At the time, we developed in an offline collaboration-focused manner, and since we didn't know Git branching strategies, one team member committed the final code all at once. In reality, I designed/implemented the UI/UX for the main dashboard and report writing form, coordinated the schedule as team leader, and handled the final presentation. This experience made me realize the importance of Git collaboration, and I applied branching strategies and PR-based collaboration in subsequent projects.
 
 ---
 
-### Q3: What was most difficult as team leader and how did you solve it?
+### Q2: Why did you develop with only pure JS without frameworks?
 
-**A**: The large skill gap among team members was most challenging. I assigned core feature development to skilled members and meaningful roles like research or design drafts to beginners. I learned that leaders should "push from behind, not pull from front," and that leveraging individual strengths while compensating weaknesses as a team is key.
-
----
-
-### Q4: Why did you choose "What's our team doing?" as the opening?
-
-**A**: As the 18th presenter out of 19 teams, I expected audience focus to be at its lowest. I summarized a problem all team projects face in three words to create empathy and grabbed attention with a short, powerful question. This resulted in 1st place in presentation score, and judges evaluated it as a "memorable presentation."
+**A**: Because it was my first real project and I didn't know frameworks. While directly implementing DOM manipulation and event handling gave me deep understanding of JavaScript principles, I felt limitations in code reusability and maintainability. After realizing why frameworks are necessary, I immediately started learning React, and now I develop efficiently while understanding internal principles thanks to my pure JS experience.
 
 ---
 
-### Q5: What area did you grow most through this project?
+### Q3: What was the most difficult part as team leader and how did you solve it?
 
-**A**: I grew in three areas. First, technically I realized the need for frameworks by implementing frontend with pure JS, expanding my tech stack to React and Django. Second, in collaboration I learned the importance of Git strategy and how to lead teams with skill gaps. Third, my learning approach shifted from Bottom-up (theory first) to Top-down (project first), making learning much more efficient and enjoyable.
+**A**: The large skill gap among team members was the most challenging. I assigned core feature development to skilled members and meaningful roles like research or design drafts to beginners. I learned that a leader "doesn't pull from the front but pushes from behind," and that the key is leveraging each person's strengths while compensating for weaknesses as a team.
 
 ---
 
-## <ì Core Lessons
+### Q4: Why did you choose the opening "What is our team doing?"?
 
-1. **Completion Matters**: 100% finished product beats 80% ideas
-2. **User-Centric**: User convenience over showing off skills
+**A**: As the 18th presentation out of 19 teams, I expected the audience's focus to be at its lowest. I summarized a problem experienced in all team projects into 3 words to build empathy and focused attention with a short, powerful question. As a result, I received 1st place in presentation score, and the judges evaluated it as a "memorable presentation."
+
+---
+
+### Q5: What area did you grow most in through this project?
+
+**A**: I grew in three areas. First, technically, implementing the frontend with pure JS made me realize the need for frameworks, leading to expansion of my tech stack with React and Django. Second, in collaboration skills, I learned the importance of Git strategy and how to lead teams with skill differences. Third, my learning approach shifted from Bottom-up (theory first) to Top-down (project first), allowing me to learn much more efficiently and enjoyably.
+
+---
+
+## üéì Core Lessons
+
+1. **Completion Matters**: 100% completed product beats 80% idea
+2. **User-Centered**: User convenience over showing off abilities
 3. **Collaboration Skills**: Git strategy, role distribution, conflict resolution
 4. **Leadership**: Leader who pushes from behind, courage to be disliked
-5. **Learning Approach**: Top-down (project í theory)
-6. **Problem Solving**: Finding solutions despite obstacles
+5. **Learning Approach**: Top-down (project ‚Üí theory)
+6. **Problem Solving**: Ability to find ways even when facing obstacles
 
 ---
 
 **First Hackathon, First Real Project - The Starting Point of My Development Journey**
 
-**Current Status**:  Excellence Award Winner (2nd place)
-**Key Achievements**: 1st place presentation score, high product completion, team leadership experience
+**Current Status**: ‚úÖ Excellence Award Winner (2nd Place)
+**Key Achievements**: 1st place in presentation score, high-completion product, team leadership experience
 **Owner**: Bada (Blitz-Q Team Leader, Frontend Developer, Presenter)
