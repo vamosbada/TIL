@@ -4,7 +4,7 @@
 
 **문제점**: 주식 초보자가 복잡한 기술적 지표 없이 차트 패턴을 학습하기 어려움
 
-**해결책**: 사용자가 업로드한 주식 차트 이미지와 유사한 과거 패턴을 찾아, 해당 패턴 이후의 주가 흐름을 보여주는 AI 기반 교육 도구
+**해결책**: 종목 코드를 입력하면 최근 12주 차트와 가장 유사한 과거 패턴 Top-3를 찾아 이후 주가 흐름을 보여주는 AI 기반 교육 도구
 
 **핵심 가치**: "과거의 비슷한 패턴을 보고 배우자"
 
@@ -13,6 +13,8 @@
 - ❌ **투자 권유**: "이 종목을 사세요"
 - 금융법 준수를 위한 명확한 구분
 
+**GitHub**: [vamosbada/patron](https://github.com/vamosbada/patron)
+
 ---
 
 ## 🛠 기술 스택
@@ -20,28 +22,30 @@
 ### 데이터 수집 및 전처리
 - **Python**: pandas, numpy
 - **데이터 소스**: yfinance API
-- **이미지 처리**: Pillow, OpenCV
-- **정규화**: scikit-learn (MinMaxScaler)
-- **시각화**: matplotlib, mplfinance
+- **이미지 처리**: Pillow (대비 증가)
+- **정규화**: scikit-learn (MinMaxScaler, 패턴별 독립 적용)
+- **시각화**: mplfinance
 
 ### AI/ML
-- **PyTorch**: ResNet18 (ImageNet 전이학습)
+- **PyTorch**: ResNet18 (ImageNet 전이학습, 그레이스케일 입력)
 - **Triplet Loss**: Semi-hard Negative Mining
-- **Faiss**: 벡터 유사도 검색 (L2 Distance)
+- **Faiss**: IndexFlatL2 벡터 유사도 검색 (L2 거리)
 
-### 백엔드/프론트엔드 (다음 단계)
-- Django 5.1 + PostgreSQL
-- React 19 + TypeScript
+### 백엔드 (FastAPI)
+- FastAPI + Uvicorn
+- yfinance 실시간 데이터 조회
+- 사전 계산된 임베딩 (50k 벡터, 서버 시작 시 로드)
 
 ---
 
 ## 💻 내 역할
 
-**전체 프로젝트 전담** (1부터 100까지)
-- 프로젝트 기획 및 설계
-- 데이터 수집 및 전처리 (완료)
-- AI 모델 개발 (진행 중)
-- 백엔드/프론트엔드 개발 (예정)
+**전체 프로젝트 전담** (1부터 100까지, 단독 개발)
+- 프로젝트 기획 및 아키텍처 설계
+- 데이터 수집 및 전처리
+- AI 모델 학습 (ResNet18 + Triplet Loss)
+- FAISS 인덱스 구축 및 Top-3 검색 알고리즘
+- FastAPI 서버 개발 및 배포 준비
 
 ---
 
@@ -50,17 +54,17 @@
 ### 전체 플로우
 
 ```
-사용자 차트 업로드
+POST /api/patron/search (종목 코드 입력)
     ↓
-그레이스케일 변환 + 정규화
+yfinance: 최근 12주 OHLC 실시간 조회
     ↓
-ResNet18 임베딩 추출 (512차원)
+MinMaxScaler 정규화 → 224×224 그레이스케일 이미지
     ↓
-Faiss 유사도 검색
+ResNet18 → 512차원 L2 정규화 임베딩
     ↓
-TOP 3 유사 패턴 반환
+FAISS IndexFlatL2로 ~50k 과거 패턴 검색
     ↓
-과거 패턴의 이후 주가 흐름 표시
+Top-3 반환 (종목 중복 제거, 본인 제외) + 3·6·12개월 수익률
 ```
 
 ### 왜 CNN + 이미지 방식인가?
@@ -86,7 +90,7 @@ NASDAQ 100 + S&P 100 → 중복 제거 → 172개 종목
 ```
 
 **수집 설정**:
-- **기간**: 2020년 01월 ~ 2025년 10월 29일
+- **기간**: 2020년 01월 ~ 2025년 10월
 - **간격**: 주봉 (1wk)
 - **보정**: auto_adjust=True (액면분할 자동 보정)
 - **데이터**: OHLC (Open, High, Low, Close) 4개 특성
@@ -96,18 +100,7 @@ NASDAQ 100 + S&P 100 → 중복 제거 → 172개 종목
 - ✅ 주봉: 노이즈 평균화, 주단위 체크로 심리적 부담 감소
 - ❌ 월봉: 데이터 너무 적음
 
-**auto_adjust=True 선택 이유**:
-```python
-# False (원본): 액면분할 시 급락처럼 보임
-8월 28일: $500
-9월 1일:  $125  # CNN이 "급락 패턴"으로 잘못 학습 ❌
-
-# True (보정): 과거 데이터도 보정
-8월 28일: $125  # 과거를 4로 나눔
-9월 1일:  $125  # 자연스럽게 이어짐 ✅
-```
-
-**결과**: 172개 종목 × 305주 = 52,360개 데이터포인트
+**결과**: 약 49,987개 패턴 (12주 슬라이딩 윈도우, 1주 stride)
 
 ---
 
@@ -122,46 +115,34 @@ NASDAQ 100 + S&P 100 → 중복 제거 → 172개 종목
 **슬라이딩 방식**: 1주씩 이동하는 겹치는 방식
 
 ```python
-# 겹치는 방식 (채택)
 for i in range(num_patterns):
     window = ohlc[i:i+12]  # 1주씩 이동
-# 결과: 305주 → 294개 패턴 (305 - 12 + 1)
+# 결과: 305주 → 종목당 294개 패턴
 ```
-
-**겹치는 슬라이딩 선택 이유**:
-- 12배 많은 학습 데이터 (294개 vs 25개)
-- 패턴의 연속성 학습
-- 사용자 업로드 차트와의 매칭률 향상
-
-**최종 패턴 수**: 172종목 × 294패턴 = **49,815개 패턴**
 
 ---
 
-### 3. 데이터 정규화
+### 3. 데이터 정규화 (MinMaxScaler, 패턴별)
 
-**정규화 전략**: 첫 Close 기준 상대화 + MinMaxScaler 혼합
-
-**왜 필요한가?**
+**왜 패턴별 MinMaxScaler인가?**
 ```python
-# 정규화 전
-테슬라 $100→$200 (100% 상승) → 차트 크기가 다름
-애플 $1000→$1100 (10% 상승) → 차트 크기가 다름
-
-# 정규화 후
-둘 다 "상승 패턴"으로 동일하게 인식
+# 정규화 후: 둘 다 [0, 1]로 매핑
+테슬라 $100→$200 (100% 상승) → 애플 $1000→$2000 (100% 상승)과 동일한 시각적 형태
 ```
 
 **구현**:
 ```python
-# 1단계: 첫 Close 기준 상대화
-base_price = window[0, 3]  # 첫 주 종가 (OHLC에서 C)
-relative = window / base_price
-
-# 2단계: MinMaxScaler (0~1 범위)
-normalized = MinMaxScaler().fit_transform(relative)
+# OHLC 4열 동시 → MinMaxScaler → [0, 1]
+scaler = MinMaxScaler()
+normalized = scaler.fit_transform(window)  # 12주 패턴별 독립 적용
 ```
 
-**핵심**: 절대 가격이 아닌 "상대적 변화율"을 학습
+**왜 Log 정규화 안 쓰나?** (실험 3에서 기각)
+```
+Log: 직선 상승 [100,110,120,130,140,150] → 곡선 [0.0, 0.095, 0.182, ...]
+MinMaxScaler: 직선 → 직선 [0.0, 0.2, 0.4, 0.6, 0.8, 1.0] ✅
+```
+Log 정규화는 차트 모양을 왜곡함 — 숫자상으론 가깝지만 시각적으로 다른 패턴을 검색하는 문제 발생. MinMaxScaler가 원래 차트 형태를 보존.
 
 ---
 
@@ -169,97 +150,76 @@ normalized = MinMaxScaler().fit_transform(relative)
 
 **변환 과정**:
 ```
-(12주, 4열) OHLC 숫자 배열 → (224, 224, 1) 그레이스케일 이미지
+(12주, 4열) OHLC 배열 → mplfinance 캔들차트 → (224, 224, 1) 그레이스케일
 ```
 
-**이미지 형식**:
-- 크기: 224×224 (ResNet18 입력 크기)
-- 채널: 그레이스케일 (1채널)
-- 정규화: 0~1 범위
+**왜 그레이스케일?**: 색상이 아닌 패턴 모양이 중요. 차트 스타일 의존성 제거.
 
-**왜 그레이스케일?**
-
-문제: 사용자 업로드 차트의 색상이 제각각
-```
-차트 A: 빨강/초록 캔들
-차트 B: 검정/하양 캔들
-차트 C: 파랑/노랑 캔들
-```
-
-해결: 그레이스케일 변환으로 색상 무관하게 "패턴 모양"만 학습
-
----
-
-### 5. 대규모 이미지 생성 (49,815개)
-
-**목표**: 49,815개 패턴을 224×224 그레이스케일 이미지로 변환
-
-**mplfinance 선택 이유**:
-- ✅ 금융 차트에 최적화 (캔들스틱 전용)
-- ✅ 심지(Wick) 렌더링이 우수
-- ✅ 코드가 간결
-
-**대비 증가 옵션 추가**:
+**대비 증가**:
 ```python
-from PIL import ImageEnhance
-
-# mplfinance로 차트 생성 후
-mpf.plot(data, type='candle', savefig={'dpi': 150})
-
-# 대비 증가 (1.5배)
-enhancer = ImageEnhance.Contrast(img_resized)
-img_enhanced = enhancer.enhance(1.5)
+enhancer = ImageEnhance.Contrast(img)
+img_enhanced = enhancer.enhance(1.5)  # 1.5배 대비 강화
 ```
-
-**효과**: 캔들 패턴이 더 뚜렷하게 표현되어 CNN 학습 효율 향상
-
-**장시간 작업 처리**:
-- 체크포인트 시스템: 100개마다 진행상황 저장
-- 중단되어도 이어서 실행 가능
-- tqdm으로 실시간 진행상황 확인
 
 ---
 
-### 6. AI 모델 설계
+### 5. AI 모델: ResNet18 + Triplet Loss
 
-**ResNet18 + 전이학습**:
-- ImageNet으로 사전 학습된 모델 사용
-- 처음부터 학습(100시간+) vs 전이학습(5-6시간)
-- 512차원 임베딩 추출
+**아키텍처**:
+- ImageNet 사전학습 ResNet18
+- conv1: 3채널 → 1채널 (그레이스케일 입력)
+- FC 레이어 제거 → 512차원 L2 정규화 임베딩 출력
 
 **Triplet Loss + Semi-hard Negative Mining**:
 ```python
-Loss = max(0, d(anchor, positive) - d(anchor, negative) + margin)
-
-# 목표: 비슷한 패턴은 가까이, 다른 패턴은 멀리
+Loss = max(d(anchor, positive) - d(anchor, negative) + margin, 0)
+# margin = 0.2
 ```
 
-**자기지도학습**:
-- 수동 레이블링 불필요 (49,815개 × 3 = 149,445 조합)
-- 자동으로 Anchor-Positive-Negative 생성
-- "상대적 유사도" 학습
+**Anchor-Positive 쌍**: 같은 종목의 t주차 패턴과 t+1, t+2, t+3주차 패턴
 
-**Faiss L2 Distance**:
-- 512차원 임베딩 벡터 간 유클리드 거리 측정
-- 거리가 작을수록 유사한 패턴
-- 49,815개 패턴에서 실시간 검색
+**학습 결과**:
+
+| Epoch | Train Loss | Val Loss | 비고 |
+|-------|-----------|---------|------|
+| 1 | 0.007197 | 0.005817 | Random Negative |
+| 2 | 0.004771 | **0.005174** | Random Negative — Best |
+| 3 | 0.004488 | 0.005999 | Semi-hard → Early Stop |
+
+- 학습 시간: 1.5시간 (NVIDIA A100, Mixed Precision)
+- 이미지 생성 포함 전체: 6.5시간
 
 ---
 
-### 7. 크로스 종목 매칭 전략
+### 6. FAISS 검색 + Top-3 알고리즘
 
-**전체 검색 (채택)**:
+**인덱스**: `faiss.IndexFlatL2(512)` — ~50k 벡터 정확 L2 검색
+
+**Top-3 알고리즘**:
+```python
+def get_top3(query_embedding, all_embeddings, metadata, query_ticker, query_date):
+    # 1. L2 거리 정렬 → Top-100 후보
+    distances = np.linalg.norm(all_embeddings - query_embedding, axis=1)
+    top_k_indices = np.argsort(distances)[:100]
+
+    # 2. 본인 제외 (같은 ticker + 14일 이내)
+    # 3. 종목 중복 제거: 종목당 가장 유사한 1개만
+    selected = []
+    seen_tickers = set()
+    for idx in top_k_indices:
+        ticker = metadata.loc[idx, 'ticker']
+        if ticker == query_ticker and date_diff < 14:
+            continue
+        if ticker in seen_tickers:
+            continue
+        selected.append(idx)
+        seen_tickers.add(ticker)
+        if len(selected) == 3:
+            break
+    return selected
 ```
-TSLA 업로드 → NVDA, AMD, NFLX, F... 모두에서 검색
-→ "테슬라가 넷플릭스 2년 전이랑 비슷하네!"
-```
 
-**선택 이유**:
-- 예상 못한 연결고리 발견 = 서비스의 진짜 가치
-- 산업 간 사이클 이해 가능
-- 주린이 학습 효과 극대화
-
-> 상세한 기술 결정 과정은 [DECISIONS.ko.md](./DECISIONS.ko.md) 참고
+**왜 종목 중복 제거?**: 없으면 같은 종목의 연속된 패턴이 Top-3 독점 — 평균 2.2개 중복.
 
 ---
 
@@ -268,124 +228,102 @@ TSLA 업로드 → NVDA, AMD, NFLX, F... 모두에서 검색
 | 항목 | 값 |
 |------|-----|
 | **총 종목 수** | 172개 (NASDAQ 100 + S&P 100) |
-| **데이터 기간** | 2020년 01월 ~ 2025년 10월 29일 |
-| **총 주봉 수** | 305주 |
-| **생성된 패턴 수** | 49,815개 |
+| **데이터 기간** | 2020년 01월 ~ 2025년 10월 |
+| **생성된 패턴 수** | 약 49,987개 |
 | **이미지 크기** | 224×224 그레이스케일 |
 | **임베딩 차원** | 512차원 (ResNet18) |
+| **학습 시간** | 1.5시간 (A100) + 5시간 이미지 생성 |
+
+---
+
+## 🧪 실험 로그
+
+### 실험 1 — MinMaxScaler (최종 채택)
+- Val Loss: **0.005174** (Epoch 2)
+- Top-3 평균 중복 종목: 2.20개 → 종목 중복 제거로 해결
+- 시각적 품질: ✅ 눈으로 봐도 유사한 패턴
+
+### 실험 2 — 정규화 방법 비교
+4가지 정규화 방법 비교 분석. Log 정규화가 금융 이론상 더 우수하지만:
+
+### 실험 3 — Log 정규화 (기각)
+- Val Loss: 0.138237 — **실험 1 대비 27배 높음**
+- 평균 중복 종목: 0.15개 (수치상 더 좋음)
+- 시각적 품질: ❌ 숫자는 가깝지만 시각적으로 다른 패턴 반환
+
+**핵심 교훈**: 지표 개선 ≠ 실제 개선. 항상 시각적으로 검증해야 함.
 
 ---
 
 ## 💡 배운 점
 
-### 기술적 배움
+**1. 이론과 실제의 괴리**
+- Log 정규화는 금융 이론상 표준이지만 직선 추세를 곡선으로 왜곡
+- MinMaxScaler가 시각적 차트 형태를 보존 → 모델이 사람의 시각 인식과 일치
 
-**1. 데이터 전처리의 중요성**
-- 정규화 타이밍: 숫자 단계에서 먼저!
-- 이미지 생성 후 정규화는 이미 늦음
-- 절대 가격이 아닌 상대적 변화율 학습
+**2. 데이터 중심적 사고**
+- 49,987개 패턴 × Triplet Loss 조합 = 충분한 학습 신호
+- ImageNet 전이학습으로 학습 시간 대폭 단축 (6.5시간 vs 100시간+)
 
-**2. 전이학습의 강력함**
-- ImageNet 사전 학습 → 5-6시간으로 단축
-- 처음부터 학습하면 100시간 이상
-- 49,815개 패턴으로 충분한 성능
-
-**3. 자기지도학습**
-- Triplet Loss = Pull(비슷한 것) + Push(다른 것)
-- 수동 레이블링 불필요
-- Semi-hard Negative가 학습 효율 최고
-
-**4. 실용적 기술 선택**
-- 주봉: 노이즈 감소 + 충분한 데이터
-- 겹치는 슬라이딩 윈도우: 12배 많은 학습 데이터
-- mplfinance: 금융 차트 전용 라이브러리
-- 그레이스케일: 색상 무관하게 패턴 학습
-- 대비 증가: 캔들 패턴 명확화
-
-### 설계 배움
-
-**1. 주린이 중심 설계**
-- 주봉 = 심리적 부담 감소
-- 전체 검색 = 발견의 재미
-- 단순함 > 복잡한 옵션
-
-**2. 차별화 전략**
-- 분류 아닌 검색
-- 크로스 종목/산업 검색
-- 구체적 과거 사례 제시
-
-**3. 법적 안전성**
-- "정보 제공" vs "투자 권유" 명확히 구분
-- 과거 패턴 제시 ≠ 미래 예측
+**3. 알고리즘 설계**
+- 종목 중복 제거는 유용한 검색 결과를 위해 필수
+- 임베딩 사전 계산: API 응답 <1초 (요청마다 계산 시 3분 소요)
 
 **4. 대규모 작업 설계**
-- 체크포인트 시스템 필수
-- 진행상황 모니터링
-- 중단되어도 이어갈 수 있게
-
----
-
-## 🔗 다음 단계
-
-### Phase 2: AI 모델 학습 (진행 중)
-- [ ] ResNet18 백본 구축
-- [ ] Triplet Loss 구현
-- [ ] Semi-hard Negative Mining
-- [ ] 모델 학습 및 검증
-
-### Phase 3: 유사도 검색 (예정)
-- [ ] Faiss 인덱스 구축
-- [ ] Django API 개발
-- [ ] 검색 결과 최적화
-
-### Phase 4: 프론트엔드 (예정)
-- [ ] React UI 개발
-- [ ] 차트 시각화
-- [ ] 통합 테스트
+- 100개마다 체크포인트 저장 — 중단 후 재개 가능
+- A100 Mixed Precision으로 메모리 사용량 절감
 
 ---
 
 ## ❓ 면접 예상 질문
 
-**Q1: CNN을 선택한 이유는?**
-> A: RNN/LSTM은 숫자 시퀀스만 보지만, CNN은 차트의 "모양"을 이미지로 인식합니다. 사람이 차트를 시각적으로 보듯이, CNN도 시각적 패턴을 학습합니다. 입력이 이미지이므로 CNN이 최적입니다.
+**Q1: RNN/LSTM 대신 CNN을 선택한 이유는?**
+> A: RNN/LSTM은 숫자 시퀀스만 보지만, CNN은 차트의 "모양"을 이미지로 인식합니다. 사람이 차트를 시각적으로 보듯이 CNN도 시각적 패턴을 학습합니다. 입력이 이미지이므로 CNN이 최적입니다.
 
-**Q2: 왜 전체 종목에서 검색하나요?**
-> A: "테슬라가 넷플릭스 2년 전과 비슷하다"같은 예상 못한 연결고리 발견이 서비스의 진짜 가치입니다. 산업 간 사이클 이해를 돕고, 주린이 학습 효과를 극대화합니다.
+**Q2: Log 정규화 대신 MinMaxScaler를 선택한 이유는?**
+> A: Log 정규화는 직선 추세를 곡선으로 왜곡해서, 모델이 사람 눈에 유사하지 않은 패턴을 검색하는 문제가 발생했습니다. 실험 1과 3을 직접 비교한 결과, Val Loss는 Log가 27배 나빴고 시각적 품질도 떨어졌습니다. 이론과 실제가 다른 대표적 사례입니다.
 
-**Q3: 왜 주봉 데이터를 선택했나요?**
-> A: 일봉은 노이즈가 많아 주린이에게 부담이고, 월봉은 패턴 수가 너무 적습니다. 주봉은 49,815개의 충분한 패턴을 확보하면서도 주단위 체크로 심리적 부담을 줄입니다.
+**Q3: Top-3에서 종목 중복 제거를 하는 이유는?**
+> A: 제거 없이는 같은 종목의 연속된 패턴이 Top-3를 독점합니다 (평균 2.2개 중복). 중복 제거로 다양하고 유용한 결과를 반환합니다.
 
-**Q4: 각 패턴마다 독립적으로 정규화한 이유는?**
-> A: 절대 가격(예: AAPL $150 vs TSLA $200)이 아닌 상대적 패턴 형태(예: 상승 추세, 하락 추세)를 학습시키기 위해서입니다. 가격이 다른 종목 간에도 패턴 유사성을 비교할 수 있습니다.
+**Q4: 임베딩을 왜 사전 계산하나요?**
+> A: 50,000개 임베딩을 요청마다 계산하면 약 3분이 걸립니다. 서버 시작 시 미리 로드하면 응답 시간 <1초로 단축됩니다.
 
-**Q5: OHLC 4개 특성을 사용하는 이유는?**
-> A: 종가만 사용하면 결과만 보지만, OHLC 4개 특성을 사용하면 시가, 고가, 저가, 종가를 모두 반영한 캔들차트로 변동성까지 포착할 수 있습니다. 더 정확한 패턴 인식을 위해 선택했습니다.
+**Q5: Semi-hard Negative Mining을 선택한 이유는?**
+> A: Easy Negative는 gradient가 거의 0에 가까워 학습 기여가 없고, Hard Negative는 초반 학습을 불안정하게 만듭니다. Semi-hard Negative는 margin 내에 있지만 positive보다 먼 샘플로, 학습 효율을 최대화합니다.
 
-**Q6: Semi-hard Negative Mining을 선택한 이유는?**
-> A: Easy Negative는 학습 효과가 낮고, Hard Negative는 학습이 불안정합니다. Semi-hard Negative는 "적당히 헷갈리는" 샘플로 학습 효율을 최대화합니다. 49,815개 패턴으로 배치 크기 32면 충분합니다.
-
-**Q7: 49,815개 패턴이 충분한가요?**
-> A: Triplet Loss는 한 배치에서 여러 조합을 만들기 때문에, 실질적인 학습 샘플은 훨씬 많습니다. 또한 ImageNet 전이학습으로 시작하므로 충분한 데이터량입니다.
+**Q6: 주봉 데이터를 선택한 이유는?**
+> A: 일봉은 주린이에게 노이즈가 많아 부담이고, 월봉은 패턴 수가 너무 적습니다. 주봉은 49,987개의 충분한 패턴을 확보하면서도 심리적 부담을 줄입니다.
 
 ---
 
 ## 📂 프로젝트 구조
 
 ```
-Patron/
-├── data/
-│   ├── raw/                 # yfinance 원본 데이터
-│   ├── processed/           # 전처리된 패턴 (49,815개)
-│   ├── metadata.csv         # 메타데이터
-│   └── images/              # 그레이스케일 차트 이미지 (224×224)
+patron/
 ├── notebooks/
-│   └── preprocessing.ipynb  # 전처리 코드
-└── README.md                # 프로젝트 설명
+│   ├── 01_preprocessing.ipynb        # 데이터 수집 및 전처리
+│   ├── 02_training_v1.ipynb          # ResNet18 + Triplet Loss (최종 모델)
+│   ├── 03_faiss_search.ipynb         # FAISS 인덱스 + Top-3 검색
+│   ├── 04_normalization_compare.ipynb # MinMaxScaler vs Log 분석
+│   ├── 05_preprocessing_v2.ipynb     # Log 정규화 전처리
+│   ├── 06_training_v2.ipynb          # Log 정규화 학습 (기각)
+│   ├── 07_visual_comparison.ipynb    # 실험 1 vs 실험 3 시각적 비교
+│   ├── 08_realtime_search.ipynb      # yfinance 실시간 데모
+│   └── 09_embedding_precompute.ipynb # 50k 임베딩 사전 계산
+├── patron_fastapi/
+│   ├── main.py                       # FastAPI 서버
+│   ├── requirements.txt
+│   ├── SERVER.md
+│   └── data/
+│       ├── metadata_all.csv          # 패턴 메타데이터 (49,987행)
+│       └── raw/                      # 172개 종목 CSV
+├── ARCHITECTURE.md                   # 전체 설계 문서 및 실험 로그
+└── README.md
 ```
 
 ---
 
-**현재 상태**: ✅ Phase 1 완료 (데이터 전처리)
-**다음 목표**: 🔄 Phase 2 진행 중 (AI 모델 학습)
-**담당**: 바다 (QuantrumAI 팀 내 Patron 전담)
+**현재 상태**: ✅ 완료 — 데이터 전처리 + 모델 학습 + FAISS 인덱싱 + FastAPI 서버
+**GitHub**: [vamosbada/patron](https://github.com/vamosbada/patron)
+**담당**: 신바다 (QuantrumAI ML Engineer)
